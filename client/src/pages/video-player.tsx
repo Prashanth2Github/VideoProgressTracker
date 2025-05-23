@@ -1,4 +1,4 @@
-import { Bell, Wifi, Moon, Sun, Play } from 'lucide-react';
+import { Bell, Moon, Sun, Play } from 'lucide-react';
 import { formatTime } from '@/lib/interval-utils';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from '@/components/sidebar';
@@ -62,8 +62,11 @@ export default function VideoPlayerPage() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar />
+    <div className="flex h-screen overflow-hidden bg-background dark:bg-background">
+      {/* Desktop Sidebar - Only visible on large screens */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
       
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Enhanced Professional Header */}
@@ -71,28 +74,29 @@ export default function VideoPlayerPage() {
           {/* Background Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 dark:from-primary/10 dark:to-accent/10"></div>
           
-          <div className="relative z-10 px-6 py-6">
+          <div className="relative z-10 px-4 lg:px-6 py-4 lg:py-6">
             <div className="flex items-center justify-between">
               {/* Left Section - Course Info */}
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3 lg:space-x-6">
+                {/* Mobile Menu Button - Only on mobile */}
                 <div className="lg:hidden">
                   <Sidebar />
                 </div>
                 
                 {/* Course Badge & Info */}
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3 lg:space-x-4">
                   <div className="w-14 h-14 gradient-primary rounded-2xl flex items-center justify-center shadow-medium">
                     <Play className="w-7 h-7 text-white" />
                   </div>
                   
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center space-x-3 mb-1">
-                      <h1 className="text-2xl font-bold text-secondary dark:text-white">React Components & Props</h1>
-                      <div className="px-3 py-1 bg-accent/10 text-accent dark:bg-accent/20 dark:text-accent rounded-xl text-xs font-bold">
+                      <h1 className="text-xl lg:text-2xl font-bold text-secondary dark:text-white truncate">React Components & Props</h1>
+                      <div className="px-2 lg:px-3 py-1 bg-accent/10 text-accent dark:bg-accent/20 dark:text-accent rounded-xl text-xs font-bold whitespace-nowrap">
                         PREMIUM
                       </div>
                     </div>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
+                    <div className="hidden md:flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
                       <span className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                         <span>Chapter 3 of 12</span>
@@ -106,17 +110,20 @@ export default function VideoPlayerPage() {
                         <span>1,234 students enrolled</span>
                       </span>
                     </div>
+                    <div className="md:hidden text-sm text-gray-600 dark:text-gray-300">
+                      <span>Chapter 3 • Intermediate • 1,234 students</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Right Section - Status & Controls */}
-              <div className="flex items-center space-x-4">
-                {/* Progress Overview Card */}
-                <div className="hidden xl:flex items-center space-x-4 bg-white dark:bg-gray-800 rounded-2xl px-6 py-3 shadow-medium border border-gray-100 dark:border-gray-700">
+              <div className="flex items-center space-x-2 lg:space-x-4">
+                {/* Progress Overview Card - Hidden on small screens */}
+                <div className="hidden xl:flex items-center space-x-4 bg-white dark:bg-gray-800 rounded-2xl px-4 lg:px-6 py-3 shadow-medium border border-gray-100 dark:border-gray-700">
                   <div className="flex items-center space-x-3">
-                    <div className="relative w-12 h-12">
-                      <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
+                    <div className="relative w-10 lg:w-12 h-10 lg:h-12">
+                      <svg className="w-10 lg:w-12 h-10 lg:h-12 transform -rotate-90" viewBox="0 0 36 36">
                         <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-200 dark:text-gray-700"/>
                         <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray={`${Math.round((state.totalWatched / Math.max(state.duration, 1)) * 100)}, 100`} className="text-primary" strokeLinecap="round"/>
                       </svg>
@@ -124,43 +131,49 @@ export default function VideoPlayerPage() {
                         <span className="text-xs font-bold text-primary">{Math.round((state.totalWatched / Math.max(state.duration, 1)) * 100)}%</span>
                       </div>
                     </div>
-                    <div>
+                    <div className="hidden lg:block">
                       <p className="text-sm font-bold text-gray-900 dark:text-white">Course Progress</p>
                       <p className="text-xs text-gray-500 dark:text-gray-400">{formatTime(state.totalWatched)} watched</p>
                     </div>
                   </div>
                 </div>
 
+                {/* Mini Progress Badge for Medium Screens */}
+                <div className="hidden md:flex xl:hidden items-center space-x-2 bg-white dark:bg-gray-800 rounded-2xl px-3 py-2 shadow-soft border border-gray-100 dark:border-gray-700">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span className="text-sm font-bold text-primary">{Math.round((state.totalWatched / Math.max(state.duration, 1)) * 100)}%</span>
+                </div>
+
                 {/* Connection Status */}
-                <div className="flex items-center space-x-3 px-4 py-2 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 shadow-soft">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-bold text-green-700 dark:text-green-400">Live</span>
+                <div className="hidden sm:flex items-center space-x-2 lg:space-x-3 px-3 lg:px-4 py-2 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 shadow-soft">
+                  <div className="w-2 lg:w-3 h-2 lg:h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs lg:text-sm font-bold text-green-700 dark:text-green-400">Live</span>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1 lg:space-x-2">
                   {/* Theme Toggle */}
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="w-12 h-12 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    className="w-10 lg:w-12 h-10 lg:h-12 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                     onClick={toggleTheme}
                   >
                     {theme === 'dark' ? (
-                      <Sun className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                      <Sun className="w-4 lg:w-5 h-4 lg:h-5 text-gray-600 dark:text-gray-300" />
                     ) : (
-                      <Moon className="w-5 h-5 text-gray-600" />
+                      <Moon className="w-4 lg:w-5 h-4 lg:h-5 text-gray-600" />
                     )}
                   </Button>
                   
                   {/* Notifications */}
-                  <Button variant="ghost" size="icon" className="relative w-12 h-12 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center font-bold shadow-lg">2</span>
+                  <Button variant="ghost" size="icon" className="relative w-10 lg:w-12 h-10 lg:h-12 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <Bell className="w-4 lg:w-5 h-4 lg:h-5 text-gray-600 dark:text-gray-300" />
+                    <span className="absolute -top-1 -right-1 w-4 lg:w-5 h-4 lg:h-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center font-bold shadow-lg">2</span>
                   </Button>
 
                   {/* User Menu */}
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold shadow-medium cursor-pointer hover:shadow-lg transition-shadow">
+                  <div className="w-10 lg:w-12 h-10 lg:h-12 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold shadow-medium cursor-pointer hover:shadow-lg transition-shadow text-xs lg:text-sm">
                     JD
                   </div>
                 </div>
