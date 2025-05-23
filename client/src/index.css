@@ -32,29 +32,32 @@
 }
 
 .dark {
-  --background: 240 10% 3.9%;
-  --foreground: 0 0% 98%;
-  --muted: 240 3.7% 15.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --popover: 240 10% 3.9%;
-  --popover-foreground: 0 0% 98%;
-  --card: 240 10% 3.9%;
-  --card-foreground: 0 0% 98%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --primary: 207 90% 54%; /* #1976D2 */
-  --primary-foreground: 211 100% 99%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --accent: 122 39% 49%; /* #4CAF50 */
-  --accent-foreground: 0 0% 98%;
-  --destructive: 4 90% 58%; /* #F44336 */
-  --destructive-foreground: 0 0% 98%;
-  --ring: 240 4.9% 83.9%;
-  --radius: 0.5rem;
+  --background: 222 84% 5%; /* #0A0E1A - Very dark blue */
+  --foreground: 210 40% 95%; /* #F1F5F9 - Light blue-white */
+  --muted: 217 33% 17%; /* #1E293B - Dark blue-gray */
+  --muted-foreground: 215 20% 65%; /* #94A3B8 - Medium blue-gray */
+  --popover: 222 84% 5%;
+  --popover-foreground: 210 40% 95%;
+  --card: 222 84% 5%;
+  --card-foreground: 210 40% 95%;
+  --border: 217 33% 17%; /* #1E293B - Dark border */
+  --input: 217 33% 17%;
+  --primary: 210 100% 56%; /* #0EA5E9 - Sky blue (same as light) */
+  --primary-foreground: 222 84% 5%;
+  --secondary: 215 25% 27%; /* #334155 - Medium dark blue-gray */
+  --secondary-foreground: 210 40% 95%;
+  --accent: 160 84% 39%; /* #10B981 - Emerald green (same as light) */
+  --accent-foreground: 222 84% 5%;
+  --destructive: 0 84% 60%; /* #EF4444 - Red (same as light) */
+  --destructive-foreground: 210 40% 95%;
+  --ring: 210 100% 56%;
+  --radius: 0.75rem;
 
   /* Custom colors for the app in dark mode */
-  --surface: 240 10% 3.9%;
+  --surface: 220 39% 11%; /* #15202B - Dark surface */
+  --surface-secondary: 217 33% 17%; /* #1E293B - Slightly lighter surface */
+  --gradient-from: 210 100% 56%; /* Sky blue */
+  --gradient-to: 160 84% 39%; /* Emerald */
 }
 
 @layer base {

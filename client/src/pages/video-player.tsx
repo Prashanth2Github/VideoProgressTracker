@@ -1,4 +1,4 @@
-import { Bell, Wifi } from 'lucide-react';
+import { Bell, Wifi, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from '@/components/sidebar';
 import { VideoPlayer } from '@/components/video-player';
@@ -7,9 +7,11 @@ import { TimelineVisualization } from '@/components/timeline-visualization';
 import { APIControls } from '@/components/api-controls';
 import { useVideoProgress } from '@/hooks/use-video-progress';
 import { useToast } from '@/hooks/use-toast';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function VideoPlayerPage() {
   const { toast } = useToast();
+  const { theme, toggleTheme } = useTheme();
   
   // In a real application, get these from authentication context
   const userId = 'user123';
@@ -88,9 +90,22 @@ export default function VideoPlayerPage() {
                   {Math.round((state.totalWatched / Math.max(state.duration, 1)) * 100)}% Complete
                 </span>
               </div>
+              {/* Theme Toggle */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="rounded-2xl"
+                onClick={toggleTheme}
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-600" />
+                )}
+              </Button>
               {/* Notification Bell */}
               <Button variant="ghost" size="icon" className="relative rounded-2xl">
-                <Bell className="w-5 h-5 text-gray-600" />
+                <Bell className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center font-bold">2</span>
               </Button>
             </div>
