@@ -16,15 +16,15 @@ export function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const SidebarContent = () => (
-    <div className="flex h-full flex-col bg-surface border-r border-gray-100">
+    <div className="flex h-full flex-col bg-surface dark:bg-surface">
       <div className="p-6">
-        <div className="flex items-center space-x-3 mb-8">
-          <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-soft">
-            <Play className="w-6 h-6 text-white" />
+        <div className="flex items-center space-x-4 mb-8">
+          <div className="w-14 h-14 gradient-primary rounded-2xl flex items-center justify-center shadow-medium">
+            <Play className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-secondary">LearnTrack</h1>
-            <p className="text-xs text-gray-500">Video Progress Platform</p>
+            <h1 className="text-xl font-bold text-secondary dark:text-white">LearnTrack</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Smart Video Learning</p>
           </div>
         </div>
         
@@ -74,7 +74,7 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:block w-64 bg-surface shadow-lg border-r border-gray-200">
+      <aside className="hidden lg:block w-72 bg-surface dark:bg-surface shadow-medium border-r border-gray-100 dark:border-gray-700">
         <SidebarContent />
       </aside>
 
