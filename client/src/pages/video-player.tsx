@@ -9,6 +9,7 @@ import { APIControls } from '@/components/api-controls';
 import { useVideoProgress } from '@/hooks/use-video-progress';
 import { useToast } from '@/hooks/use-toast';
 import { useTheme } from '@/contexts/ThemeContext';
+import { Link } from 'wouter';
 
 export default function VideoPlayerPage() {
   const { toast } = useToast();
@@ -167,15 +168,19 @@ export default function VideoPlayerPage() {
                   </Button>
                   
                   {/* Notifications */}
-                  <Button variant="ghost" size="icon" className="relative w-10 lg:w-12 h-10 lg:h-12 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                    <Bell className="w-4 lg:w-5 h-4 lg:h-5 text-gray-600 dark:text-gray-300" />
-                    <span className="absolute -top-1 -right-1 w-4 lg:w-5 h-4 lg:h-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center font-bold shadow-lg">2</span>
-                  </Button>
+                  <Link href="/notifications">
+                    <Button variant="ghost" size="icon" className="relative w-10 lg:w-12 h-10 lg:h-12 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                      <Bell className="w-4 lg:w-5 h-4 lg:h-5 text-gray-600 dark:text-gray-300" />
+                      <span className="absolute -top-1 -right-1 w-4 lg:w-5 h-4 lg:h-5 bg-red-500 rounded-full text-xs text-white flex items-center justify-center font-bold shadow-lg">2</span>
+                    </Button>
+                  </Link>
 
                   {/* User Menu */}
-                  <div className="w-10 lg:w-12 h-10 lg:h-12 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold shadow-medium cursor-pointer hover:shadow-lg transition-shadow text-xs lg:text-sm">
-                    JD
-                  </div>
+                  <Link href="/profile">
+                    <div className="w-10 lg:w-12 h-10 lg:h-12 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold shadow-medium cursor-pointer hover:shadow-lg transition-shadow text-xs lg:text-sm">
+                      JD
+                    </div>
+                  </Link>
                 </div>
               </div>
             </div>
