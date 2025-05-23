@@ -103,13 +103,20 @@ export function VideoPlayer({
   };
 
   const handleDownload = () => {
-    // In a real application, this would trigger a download
-    console.log('Download video requested');
+    // Create a download link for the video
+    const link = document.createElement('a');
+    link.href = videoUrl;
+    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.mp4`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handlePlaylistToggle = () => {
-    // In a real application, this would toggle playlist view
-    console.log('Playlist toggle requested');
+    // Toggle playlist visibility or navigate to playlist view
+    // For now, we'll show a toast notification
+    alert('Playlist feature coming soon! This will show related videos and learning materials.');
   };
 
   if (isLoading) {
@@ -126,11 +133,11 @@ export function VideoPlayer({
   }
 
   return (
-    <div className="bg-surface rounded-xl shadow-lg overflow-hidden mb-8">
-      <div className="aspect-video bg-black relative group">
+    <div className="bg-surface rounded-2xl shadow-medium overflow-hidden mb-8 border border-gray-100">
+      <div className="aspect-video bg-gradient-to-br from-gray-900 to-black relative group">
         <video 
           ref={videoRef}
-          className="w-full h-full object-cover" 
+          className="w-full h-full object-cover rounded-t-2xl" 
           controls 
           preload="metadata"
         >
@@ -140,17 +147,22 @@ export function VideoPlayer({
         
         {/* Resume Position Indicator */}
         {showResumeIndicator && (
-          <div className="absolute top-4 right-4 bg-primary text-white px-4 py-2 rounded-lg shadow-lg transition-opacity duration-300">
-            <div className="flex items-center space-x-2">
-              <Play className="w-4 h-4" />
-              <span>Resume from {formatTimeDetailed(state.lastPosition)}</span>
+          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-3 rounded-xl shadow-lg transition-all duration-300 border border-white/20">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                <Play className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Resume watching</p>
+                <p className="text-xs text-gray-600">{formatTimeDetailed(state.lastPosition)}</p>
+              </div>
               <Button
                 size="sm"
                 variant="ghost"
-                className="text-white hover:text-gray-200 p-1 h-auto"
+                className="text-gray-600 hover:text-primary p-2 h-auto rounded-lg"
                 onClick={handleResumeClick}
               >
-                <RotateCcw className="w-3 h-3" />
+                <RotateCcw className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -158,42 +170,48 @@ export function VideoPlayer({
       </div>
       
       {/* Video Controls Bar */}
-      <div className="p-4 bg-gray-50">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-secondary">{title}</h3>
-          <div className="flex items-center space-x-4">
+      <div className="p-6 bg-surface-secondary">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+          <div>
+            <h3 className="text-xl font-bold text-secondary mb-1">{title}</h3>
+            <p className="text-sm text-gray-600">Learn React fundamentals with hands-on examples</p>
+          </div>
+          <div className="flex items-center space-x-3">
             <Button 
               onClick={handlePlaylistToggle}
-              className="flex items-center space-x-2"
+              className="gradient-primary hover:opacity-90 transition-opacity flex items-center space-x-2 rounded-xl px-4 py-2.5"
             >
               <List className="w-4 h-4" />
-              <span>Playlist</span>
+              <span className="font-medium">Playlist</span>
             </Button>
             <Button 
               variant="outline"
               onClick={handleDownload}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 rounded-xl px-4 py-2.5 border-gray-200 hover:bg-gray-50 transition-colors"
             >
               <Download className="w-4 h-4" />
-              <span>Download</span>
+              <span className="font-medium">Download</span>
             </Button>
           </div>
         </div>
         
         {/* Video Metadata */}
-        <div className="flex items-center space-x-6 text-sm text-gray-600">
-          <span className="flex items-center space-x-1">
-            <span>Duration:</span>
-            <span className="font-medium">{formatTimeDetailed(state.duration)}</span>
-          </span>
-          <span className="flex items-center space-x-1">
-            <span>Views:</span>
-            <span className="font-medium">{videoMetrics.views.toLocaleString()}</span>
-          </span>
-          <span className="flex items-center space-x-1">
-            <span>Published:</span>
-            <span className="font-medium">{videoMetrics.publishDate}</span>
-          </span>
+        <div className="flex flex-wrap items-center gap-6 text-sm">
+          <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-soft">
+            <div className="w-2 h-2 bg-primary rounded-full"></div>
+            <span className="text-gray-600">Duration:</span>
+            <span className="font-semibold text-gray-800">{formatTimeDetailed(state.duration)}</span>
+          </div>
+          <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-soft">
+            <div className="w-2 h-2 bg-accent rounded-full"></div>
+            <span className="text-gray-600">Views:</span>
+            <span className="font-semibold text-gray-800">{videoMetrics.views.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-soft">
+            <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+            <span className="text-gray-600">Published:</span>
+            <span className="font-semibold text-gray-800">{videoMetrics.publishDate}</span>
+          </div>
         </div>
       </div>
     </div>

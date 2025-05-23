@@ -91,30 +91,34 @@ export function APIControls({
   };
 
   return (
-    <div className="bg-surface rounded-xl shadow-lg p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h4 className="text-lg font-semibold text-secondary flex items-center">
-          <Server className="mr-3 text-primary" />
+    <div className="bg-surface rounded-2xl shadow-medium p-6 border border-gray-100 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-24 h-24 bg-green-500 opacity-5 rounded-full -translate-y-8 translate-x-8"></div>
+      
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 relative z-10">
+        <h4 className="text-xl font-bold text-secondary flex items-center">
+          <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center mr-4 shadow-soft">
+            <Server className="w-5 h-5 text-white" />
+          </div>
           API Status & Controls
         </h4>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3 bg-white rounded-xl px-4 py-3 shadow-soft border border-gray-100">
           <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-          <span className={`text-sm font-medium ${isConnected ? 'text-green-700' : 'text-red-700'}`}>
+          <span className={`text-sm font-bold ${isConnected ? 'text-green-700' : 'text-red-700'}`}>
             {isConnected ? 'Backend Connected' : 'Connection Lost'}
           </span>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* Auto-save Toggle */}
-        <div className="p-4 border border-gray-200 rounded-lg">
+        <div className="p-4 bg-surface-secondary border border-gray-100 rounded-2xl shadow-soft hover:shadow-medium transition-shadow">
           <div className="flex items-center space-x-3">
             <Switch
               checked={autoSaveEnabled}
               onCheckedChange={onAutoSaveToggle}
             />
             <div>
-              <p className="font-medium text-gray-900">Auto-save</p>
+              <p className="font-bold text-gray-900">Auto-save</p>
               <p className="text-xs text-gray-500">Every 5 seconds</p>
             </div>
           </div>
