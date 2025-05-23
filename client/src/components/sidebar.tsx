@@ -16,30 +16,39 @@ export function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const SidebarContent = () => (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col bg-surface border-r border-gray-100">
       <div className="p-6">
         <div className="flex items-center space-x-3 mb-8">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-            <Play className="w-5 h-5 text-white" />
+          <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-soft">
+            <Play className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-xl font-bold text-secondary">LearnTrack</h1>
+          <div>
+            <h1 className="text-xl font-bold text-secondary">LearnTrack</h1>
+            <p className="text-xs text-gray-500">Video Progress Platform</p>
+          </div>
         </div>
         
-        <nav className="space-y-2">
+        <nav className="space-y-3">
           {navigation.map((item) => {
             const isActive = location === item.href;
             return (
               <Link key={item.name} href={item.href}>
                 <div
-                  className={`flex items-center space-x-3 p-3 rounded-lg font-medium transition-colors cursor-pointer ${
+                  className={`flex items-center space-x-4 p-4 rounded-2xl font-medium transition-all cursor-pointer group ${
                     isActive
-                      ? 'bg-blue-50 text-primary'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'gradient-primary text-white shadow-soft'
+                      : 'text-gray-600 hover:bg-surface-secondary hover:shadow-soft'
                   }`}
                   onClick={() => setMobileOpen(false)}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.name}</span>
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+                    isActive 
+                      ? 'bg-white/20' 
+                      : 'bg-gray-100 group-hover:bg-white'
+                  }`}>
+                    <item.icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-gray-600'}`} />
+                  </div>
+                  <span className="font-medium">{item.name}</span>
                 </div>
               </Link>
             );
@@ -48,16 +57,15 @@ export function Sidebar() {
       </div>
       
       <div className="mt-auto p-6">
-        <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50">
-          <img 
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40" 
-            alt="User profile" 
-            className="w-10 h-10 rounded-full object-cover" 
-          />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">John Doe</p>
-            <p className="text-xs text-gray-500">Student</p>
+        <div className="flex items-center space-x-4 p-4 rounded-2xl bg-surface-secondary border border-gray-100 shadow-soft">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white font-bold shadow-soft">
+            JD
           </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-gray-900 truncate">John Doe</p>
+            <p className="text-xs text-gray-500">Premium Student</p>
+          </div>
+          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
         </div>
       </div>
     </div>

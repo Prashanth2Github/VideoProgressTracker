@@ -127,14 +127,16 @@ export function APIControls({
         {/* Manual Save */}
         <Button
           variant="outline"
-          className="p-4 h-auto flex-col items-start"
+          className="p-4 h-auto flex-col items-start bg-surface-secondary border-gray-100 rounded-2xl shadow-soft hover:shadow-medium transition-all"
           onClick={onManualSave}
           disabled={isSaving}
         >
           <div className="flex items-center space-x-3 w-full">
-            <Save className="text-primary" />
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+              <Save className="text-white w-5 h-5" />
+            </div>
             <div className="text-left">
-              <p className="font-medium text-gray-900">
+              <p className="font-bold text-gray-900">
                 {isSaving ? 'Saving...' : 'Save Now'}
               </p>
               <p className="text-xs text-gray-500">Manual backup</p>
@@ -145,13 +147,15 @@ export function APIControls({
         {/* Reset Progress */}
         <Button
           variant="outline"
-          className="p-4 h-auto flex-col items-start hover:bg-red-50 group"
+          className="p-4 h-auto flex-col items-start bg-surface-secondary border-gray-100 rounded-2xl shadow-soft hover:shadow-medium hover:bg-red-50 group transition-all"
           onClick={handleResetClick}
         >
           <div className="flex items-center space-x-3 w-full">
-            <Trash2 className="text-gray-400 group-hover:text-red-500" />
+            <div className="w-10 h-10 bg-gray-200 group-hover:bg-red-500 rounded-xl flex items-center justify-center transition-colors">
+              <Trash2 className="text-gray-500 group-hover:text-white w-5 h-5 transition-colors" />
+            </div>
             <div className="text-left">
-              <p className="font-medium text-gray-900 group-hover:text-red-700">Reset</p>
+              <p className="font-bold text-gray-900 group-hover:text-red-700 transition-colors">Reset</p>
               <p className="text-xs text-gray-500">Clear all data</p>
             </div>
           </div>
@@ -160,13 +164,15 @@ export function APIControls({
         {/* Export Data */}
         <Button
           variant="outline"
-          className="p-4 h-auto flex-col items-start"
+          className="p-4 h-auto flex-col items-start bg-surface-secondary border-gray-100 rounded-2xl shadow-soft hover:shadow-medium transition-all"
           onClick={handleExportData}
         >
           <div className="flex items-center space-x-3 w-full">
-            <Download className="text-primary" />
+            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
+              <Download className="text-white w-5 h-5" />
+            </div>
             <div className="text-left">
-              <p className="font-medium text-gray-900">Export</p>
+              <p className="font-bold text-gray-900">Export</p>
               <p className="text-xs text-gray-500">Download JSON</p>
             </div>
           </div>
@@ -174,19 +180,33 @@ export function APIControls({
       </div>
       
       {/* Recent API Calls Log */}
-      <div className="mt-6 pt-6 border-t border-gray-200">
-        <h5 className="font-medium text-gray-900 mb-3">Recent API Calls</h5>
-        <div className="space-y-2 max-h-32 overflow-y-auto">
+      <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-soft">
+        <h5 className="font-bold text-gray-900 mb-4 flex items-center">
+          <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+            <Wifi className="w-4 h-4 text-white" />
+          </div>
+          Recent API Calls
+        </h5>
+        <div className="space-y-3 max-h-40 overflow-y-auto custom-scrollbar">
           {apiCalls.length === 0 ? (
-            <div className="text-center py-4 text-gray-500">
+            <div className="text-center py-8 text-gray-500">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Server className="w-8 h-8 text-gray-400" />
+              </div>
               <p className="text-sm">No API calls logged yet</p>
+              <p className="text-xs text-gray-400 mt-1">Activity will appear here</p>
             </div>
           ) : (
             apiCalls.map((call, index) => (
-              <div key={index} className="flex items-center justify-between text-sm p-2 bg-gray-50 rounded">
-                <span className="text-gray-600">{call.endpoint}</span>
-                <span className="text-green-600 font-medium">{call.status}</span>
-                <span className="text-gray-500">{getTimeAgo(call.timestamp)}</span>
+              <div key={index} className="flex items-center justify-between text-sm p-3 bg-surface-secondary rounded-xl border border-gray-100 hover:shadow-soft transition-shadow">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-gray-700 font-mono text-xs">{call.endpoint}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className="text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded">{call.status}</span>
+                  <span className="text-gray-500 text-xs">{getTimeAgo(call.timestamp)}</span>
+                </div>
               </div>
             ))
           )}
