@@ -1,3 +1,4 @@
+import { MongoClient, Db, Collection } from 'mongodb';
 import { users, videoProgress, type User, type InsertUser, type VideoProgress, type InsertVideoProgress, type UpdateVideoProgress } from "@shared/schema";
 
 export interface IStorage {
@@ -11,47 +12,87 @@ export interface IStorage {
   deleteVideoProgress(userId: string, videoId: string): Promise<boolean>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private videoProgresses: Map<string, VideoProgress>;
-  private currentUserId: number;
-  private currentProgressId: number;
+export class MongoStorage implements IStorage {
+  private client: MongoClient;
+  private db: Db;
+  private users: Collection<User>;
+  private videoProgresses: Collection<VideoProgress>;
+  private isConnected: boolean = false;
 
   constructor() {
-    this.users = new Map();
-    this.videoProgresses = new Map();
-    this.currentUserId = 1;
-    this.currentProgressId = 1;
+    const password = process.env.MONGODB_PASSWORD;
+    if (!password) {
+      throw new Error('MONGODB_PASSWORD environment variable is required');
+    }
+    
+    const uri = `mongodb+srv://bonkuruprashanth123:${password}@videotrackercluster.vshj1q8.mongodb.net/learntrack?retryWrites=true&w=majority`;
+    
+    this.client = new MongoClient(uri);
+    this.db = this.client.db('learntrack');
+    this.users = this.db.collection('users');
+    this.videoProgresses = this.db.collection('video_progress');
+  }
+
+  async connect(): Promise<void> {
+    if (!this.isConnected) {
+      try {
+        await this.client.connect();
+        this.isConnected = true;
+        console.log('✅ Connected to MongoDB Atlas successfully!');
+        
+        // Create indexes for better performance
+        await this.users.createIndex({ username: 1 }, { unique: true });
+        await this.videoProgresses.createIndex({ userId: 1, videoId: 1 }, { unique: true });
+      } catch (error) {
+        console.error('❌ MongoDB connection failed:', error);
+        throw error;
+      }
+    }
+  }
+
+  async disconnect(): Promise<void> {
+    if (this.isConnected) {
+      await this.client.close();
+      this.isConnected = false;
+      console.log('🔌 Disconnected from MongoDB Atlas');
+    }
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    await this.connect();
+    const user = await this.users.findOne({ id });
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    await this.connect();
+    const user = await this.users.findOne({ username });
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
+    await this.connect();
+    const id = await this.getNextUserId();
     const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    
+    await this.users.insertOne(user);
     return user;
   }
 
-  private getProgressKey(userId: string, videoId: string): string {
-    return `${userId}:${videoId}`;
+  private async getNextUserId(): Promise<number> {
+    const lastUser = await this.users.findOne({}, { sort: { id: -1 } });
+    return (lastUser?.id || 0) + 1;
   }
 
   async getVideoProgress(userId: string, videoId: string): Promise<VideoProgress | undefined> {
-    const key = this.getProgressKey(userId, videoId);
-    return this.videoProgresses.get(key);
+    await this.connect();
+    const progress = await this.videoProgresses.findOne({ userId, videoId });
+    return progress || undefined;
   }
 
   async createVideoProgress(progress: InsertVideoProgress): Promise<VideoProgress> {
-    const id = this.currentProgressId++;
+    await this.connect();
+    const id = await this.getNextProgressId();
     const newProgress: VideoProgress = {
       id,
       userId: progress.userId,
@@ -62,39 +103,52 @@ export class MemStorage implements IStorage {
       duration: progress.duration || 0,
       updatedAt: new Date(),
     };
-    
-    const key = this.getProgressKey(progress.userId, progress.videoId);
-    this.videoProgresses.set(key, newProgress);
+
+    await this.videoProgresses.insertOne(newProgress);
     return newProgress;
   }
 
-  async updateVideoProgress(userId: string, videoId: string, progress: Partial<UpdateVideoProgress>): Promise<VideoProgress | undefined> {
-    const key = this.getProgressKey(userId, videoId);
-    const existing = this.videoProgresses.get(key);
-    
-    if (!existing) {
-      return undefined;
-    }
+  private async getNextProgressId(): Promise<number> {
+    const lastProgress = await this.videoProgresses.findOne({}, { sort: { id: -1 } });
+    return (lastProgress?.id || 0) + 1;
+  }
 
-    const updated: VideoProgress = {
-      id: existing.id,
-      userId: existing.userId,
-      videoId: existing.videoId,
-      intervals: (progress.intervals as [number, number][]) || existing.intervals,
-      totalUniqueSeconds: progress.totalUniqueSeconds ?? existing.totalUniqueSeconds,
-      lastPosition: progress.lastPosition ?? existing.lastPosition,
-      duration: progress.duration ?? existing.duration,
+  async updateVideoProgress(userId: string, videoId: string, progress: Partial<UpdateVideoProgress>): Promise<VideoProgress | undefined> {
+    await this.connect();
+    const updated: any = {
       updatedAt: new Date(),
     };
-    
-    this.videoProgresses.set(key, updated);
-    return updated;
+
+    if (progress.intervals !== undefined) updated.intervals = progress.intervals;
+    if (progress.totalUniqueSeconds !== undefined) updated.totalUniqueSeconds = progress.totalUniqueSeconds;
+    if (progress.lastPosition !== undefined) updated.lastPosition = progress.lastPosition;
+    if (progress.duration !== undefined) updated.duration = progress.duration;
+
+    const result = await this.videoProgresses.findOneAndUpdate(
+      { userId, videoId },
+      { $set: updated },
+      { returnDocument: 'after' }
+    );
+
+    return result || undefined;
   }
 
   async deleteVideoProgress(userId: string, videoId: string): Promise<boolean> {
-    const key = this.getProgressKey(userId, videoId);
-    return this.videoProgresses.delete(key);
+    await this.connect();
+    const result = await this.videoProgresses.deleteOne({ userId, videoId });
+    return result.deletedCount > 0;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new MongoStorage();
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await storage.disconnect();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await storage.disconnect();
+  process.exit(0);
+});
