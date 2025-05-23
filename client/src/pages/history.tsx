@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatTime, formatTimeDetailed } from '@/lib/interval-utils';
 import { useVideoProgress } from '@/hooks/use-video-progress';
+import { Link } from 'wouter';
 
 export default function HistoryPage() {
   const userId = 'user123';
@@ -191,10 +192,12 @@ export default function HistoryPage() {
 
                   {/* Actions */}
                   <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm" className="flex items-center space-x-2">
-                      <Play className="w-4 h-4" />
-                      <span className="hidden sm:inline">Continue</span>
-                    </Button>
+                    <Link href="/">
+                      <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+                        <Play className="w-4 h-4" />
+                        <span className="hidden sm:inline">Continue</span>
+                      </Button>
+                    </Link>
                     <Button variant="ghost" size="icon">
                       <MoreVertical className="w-4 h-4" />
                     </Button>
