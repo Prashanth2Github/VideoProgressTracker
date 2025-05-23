@@ -53,8 +53,13 @@ export class MemStorage implements IStorage {
   async createVideoProgress(progress: InsertVideoProgress): Promise<VideoProgress> {
     const id = this.currentProgressId++;
     const newProgress: VideoProgress = {
-      ...progress,
       id,
+      userId: progress.userId,
+      videoId: progress.videoId,
+      intervals: progress.intervals as [number, number][] || [],
+      totalUniqueSeconds: progress.totalUniqueSeconds || 0,
+      lastPosition: progress.lastPosition || 0,
+      duration: progress.duration || 0,
       updatedAt: new Date(),
     };
     
@@ -72,8 +77,13 @@ export class MemStorage implements IStorage {
     }
 
     const updated: VideoProgress = {
-      ...existing,
-      ...progress,
+      id: existing.id,
+      userId: existing.userId,
+      videoId: existing.videoId,
+      intervals: (progress.intervals as [number, number][]) || existing.intervals,
+      totalUniqueSeconds: progress.totalUniqueSeconds ?? existing.totalUniqueSeconds,
+      lastPosition: progress.lastPosition ?? existing.lastPosition,
+      duration: progress.duration ?? existing.duration,
       updatedAt: new Date(),
     };
     

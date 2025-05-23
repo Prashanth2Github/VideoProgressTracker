@@ -12,7 +12,7 @@ export const videoProgress = pgTable("video_progress", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
   videoId: text("video_id").notNull(),
-  intervals: jsonb("intervals").$type<[number, number][]>().notNull().default([]),
+  intervals: jsonb("intervals").$type<[number, number][]>().notNull(),
   totalUniqueSeconds: integer("total_unique_seconds").notNull().default(0),
   lastPosition: integer("last_position").notNull().default(0),
   duration: integer("duration").notNull().default(0),

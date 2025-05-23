@@ -214,13 +214,16 @@ export function useVideoProgress({ userId, videoId, autoSaveInterval = 5000 }: U
   }, []);
 
   const saveProgress = useCallback(() => {
+    // Only save if we have valid data
+    if (state.duration === 0) return;
+    
     const progressData = {
       userId,
       videoId,
       intervals: state.watchedIntervals,
-      totalUniqueSeconds: state.totalWatched,
-      lastPosition: state.currentTime,
-      duration: state.duration,
+      totalUniqueSeconds: Math.floor(state.totalWatched),
+      lastPosition: Math.floor(state.currentTime),
+      duration: Math.floor(state.duration),
     };
 
     saveProgressMutation.mutate(progressData);
