@@ -38,9 +38,9 @@ export function ProgressDashboard({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div className="grid grid-cols-1 gap-6 mb-8">
       {/* Progress Card */}
-      <div className="bg-surface rounded-2xl shadow-medium p-6 border border-gray-100 relative overflow-hidden">
+      <div className="bg-surface w-full rounded-2xl shadow-medium p-6 border border-gray-100 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-24 h-24 gradient-primary opacity-10 rounded-full -translate-y-8 translate-x-8"></div>
         <div className="flex items-center justify-between mb-6 relative z-10">
           <h4 className="text-lg font-bold text-secondary">Watch Progress</h4>
@@ -98,7 +98,7 @@ export function ProgressDashboard({
       </div>
 
       {/* Intervals Card */}
-      <div className="bg-surface rounded-2xl shadow-medium p-6 border border-gray-100 relative overflow-hidden">
+      <div className="bg-surface w-full rounded-2xl shadow-medium p-6 border border-gray-100 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-20 h-20 bg-accent opacity-10 rounded-full -translate-y-6 translate-x-6"></div>
         <div className="flex items-center justify-between mb-6 relative z-10">
           <h4 className="text-lg font-bold text-secondary">Watched Segments</h4>
@@ -150,7 +150,7 @@ export function ProgressDashboard({
       </div>
 
       {/* Stats Card */}
-      <div className="bg-surface rounded-2xl shadow-medium p-6 border border-gray-100 relative overflow-hidden">
+      <div className="bg-surface w-full rounded-2xl shadow-medium p-6 border border-gray-100 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-20 h-20 bg-purple-500 opacity-10 rounded-full -translate-y-6 translate-x-6"></div>
         <div className="flex items-center justify-between mb-6 relative z-10">
           <h4 className="text-lg font-bold text-secondary">Session Stats</h4>

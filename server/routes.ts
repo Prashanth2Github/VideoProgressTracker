@@ -9,13 +9,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/progress/:userId/:videoId", async (req, res) => {
     try {
       const { userId, videoId } = req.params;
-      
+
       if (!userId || !videoId) {
         return res.status(400).json({ error: "Missing userId or videoId" });
       }
 
       const progress = await storage.getVideoProgress(userId, videoId);
-      
+
       if (!progress) {
         return res.status(404).json({ error: "Progress not found" });
       }
@@ -27,33 +27,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create or update video progress
+  // Create or update video progress (upsert)
   app.post("/api/progress/:userId/:videoId", async (req, res) => {
     try {
       const { userId, videoId } = req.params;
-      
+
       if (!userId || !videoId) {
         return res.status(400).json({ error: "Missing userId or videoId" });
       }
 
-      // Validate request body
+      // Combine params and body; ensure updatedAt is set
       const progressData = {
         ...req.body,
         userId,
         videoId,
+        updatedAt: req.body.updatedAt ? new Date(req.body.updatedAt) : new Date(),
       };
 
+      // Validate incoming data against insert schema
       const validatedData = insertVideoProgressSchema.parse(progressData);
-      
-      // Check if progress already exists
+
       const existingProgress = await storage.getVideoProgress(userId, videoId);
-      
+
       let result;
       if (existingProgress) {
-        // Update existing progress
+        // Update existing
         result = await storage.updateVideoProgress(userId, videoId, validatedData);
       } else {
-        // Create new progress
+        // Create new
         result = await storage.createVideoProgress(validatedData);
       }
 
@@ -66,30 +67,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: "Validation error", details: error.errors });
       }
-      
+
       console.error("Error saving progress:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
 
-  // Update specific fields of video progress
+  // Partial update of video progress
   app.patch("/api/progress/:userId/:videoId", async (req, res) => {
     try {
       const { userId, videoId } = req.params;
-      
+
       if (!userId || !videoId) {
         return res.status(400).json({ error: "Missing userId or videoId" });
       }
 
-      // Validate partial update data
+      // Patch data: merge params + body + updatedAt set
       const updateData = updateVideoProgressSchema.parse({
         ...req.body,
         userId,
         videoId,
+        updatedAt: req.body.updatedAt ? new Date(req.body.updatedAt) : new Date(),
       });
 
       const result = await storage.updateVideoProgress(userId, videoId, updateData);
-      
+
       if (!result) {
         return res.status(404).json({ error: "Progress not found" });
       }
@@ -99,7 +101,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: "Validation error", details: error.errors });
       }
-      
+
       console.error("Error updating progress:", error);
       res.status(500).json({ error: "Internal server error" });
     }
@@ -109,13 +111,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/progress/:userId/:videoId", async (req, res) => {
     try {
       const { userId, videoId } = req.params;
-      
+
       if (!userId || !videoId) {
         return res.status(400).json({ error: "Missing userId or videoId" });
       }
 
       const deleted = await storage.deleteVideoProgress(userId, videoId);
-      
+
       if (!deleted) {
         return res.status(404).json({ error: "Progress not found" });
       }

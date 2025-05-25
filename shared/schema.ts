@@ -19,11 +19,7 @@ export const videoProgress = pgTable("video_progress", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-});
-
+// Insert schema now requires updatedAt
 export const insertVideoProgressSchema = createInsertSchema(videoProgress).pick({
   userId: true,
   videoId: true,
@@ -31,6 +27,7 @@ export const insertVideoProgressSchema = createInsertSchema(videoProgress).pick(
   totalUniqueSeconds: true,
   lastPosition: true,
   duration: true,
+  updatedAt: true,  // <--- add this
 });
 
 export const updateVideoProgressSchema = insertVideoProgressSchema.partial().extend({
