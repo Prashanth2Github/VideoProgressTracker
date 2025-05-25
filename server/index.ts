@@ -9,15 +9,16 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+  let capturedJsonResponse: Record<string, any> | undefined;
 
-  const originalResJson = res.json;
+  const originalResJson = res.json.bind(res);
   res.json = function (bodyJson, ...args) {
     capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
+    return originalResJson(bodyJson, ...args);
   };
 
   res.on("finish", () => {
@@ -43,11 +44,13 @@ app.use((req, res, next) => {
   try {
     const server = await registerRoutes(app);
 
+    // Error handling middleware (last middleware)
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
       res.status(status).json({ message });
-      throw err;
+      // Log error, but don't throw to prevent crash
+      console.error("Error middleware caught:", err);
     });
 
     if (app.get("env") === "development") {
@@ -56,8 +59,8 @@ app.use((req, res, next) => {
       serveStatic(app);
     }
 
-    const port = 5000;
-    const host = "127.0.0.1";
+    const port = Number(process.env.PORT) || 5000;
+    const host = process.env.HOST || "127.0.0.1";
 
     server.listen(port, host, () => {
       log(`✅ Server running on http://${host}:${port}`);
