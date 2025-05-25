@@ -14,7 +14,7 @@ interface VideoPlayerProps {
 export function VideoPlayer({ 
   userId, 
   videoId, 
-  videoUrl = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+  videoUrl = "/static/LectureVideos/sample-lecture.mp4.webm",
   title = "Introduction to React.js"
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
