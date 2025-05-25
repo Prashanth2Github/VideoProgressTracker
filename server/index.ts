@@ -1,27 +1,34 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+
 dotenv.config();
 
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
-
-// ✅ Fix __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// ✅ Serve static files (like videos) from public directory
+// Serve your static files (videos, css, js, etc.) from server/public folder at /static URL prefix
 app.use("/static", express.static(path.join(__dirname, "public")));
 
-// Logging middleware
+// Example test route to verify static file serving
+app.get("/test-video", (req: Request, res: Response) => {
+  const videoPath = path.join(__dirname, "public", "LectureVideos", "sample-lecture.mp4.webm");
+  res.sendFile(videoPath);
+});
+
+// Your other API routes here, for example:
+import { registerRoutes } from "./routes";
+import { setupVite, serveStatic, log } from "./vite";
+
 app.use((req, res, next) => {
   const start = Date.now();
-  const path = req.path;
+  const pathReq = req.path;
   let capturedJsonResponse: Record<string, any> | undefined;
 
   const originalResJson = res.json.bind(res);
@@ -32,16 +39,14 @@ app.use((req, res, next) => {
 
   res.on("finish", () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
+    if (pathReq.startsWith("/api")) {
+      let logLine = `${req.method} ${pathReq} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
-
       if (logLine.length > 80) {
         logLine = logLine.slice(0, 79) + "…";
       }
-
       log(logLine);
     }
   });
@@ -67,7 +72,7 @@ app.use((req, res, next) => {
       serveStatic(app);
     }
 
-    // ✅ Use 0.0.0.0 for Render, fallback to 127.0.0.1 locally
+    // Use 0.0.0.0 host for Render, fallback to localhost for local dev
     const port = Number(process.env.PORT) || 5000;
     const host = process.env.HOST || "0.0.0.0";
 

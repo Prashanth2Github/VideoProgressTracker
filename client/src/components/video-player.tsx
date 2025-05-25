@@ -30,34 +30,16 @@ export function VideoPlayer({
     autoSaveInterval: 5000,
   });
 
-  // Set up video event listeners
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const handleTimeUpdate = () => {
-      handlers.handleTimeUpdate(video.currentTime);
-    };
-
-    const handlePlay = () => {
-      handlers.handlePlay();
-    };
-
-    const handlePause = () => {
-      handlers.handlePause();
-    };
-
-    const handleSeeked = () => {
-      handlers.handleSeeked(video.currentTime);
-    };
-
-    const handleLoadedMetadata = () => {
-      handlers.handleLoadedMetadata(video.duration);
-    };
-
-    const handleRateChange = () => {
-      handlers.handlePlaybackRateChange(video.playbackRate);
-    };
+    const handleTimeUpdate = () => handlers.handleTimeUpdate(video.currentTime);
+    const handlePlay = () => handlers.handlePlay();
+    const handlePause = () => handlers.handlePause();
+    const handleSeeked = () => handlers.handleSeeked(video.currentTime);
+    const handleLoadedMetadata = () => handlers.handleLoadedMetadata(video.duration);
+    const handleRateChange = () => handlers.handlePlaybackRateChange(video.playbackRate);
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('play', handlePlay);
@@ -76,20 +58,13 @@ export function VideoPlayer({
     };
   }, [handlers]);
 
-  // Handle resume from last position
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !state.lastPosition || isLoading) return;
 
-    // Show resume indicator if last position is more than 10 seconds
     if (state.lastPosition > 10) {
       setShowResumeIndicator(true);
-      
-      // Auto-hide after 5 seconds
-      const timer = setTimeout(() => {
-        setShowResumeIndicator(false);
-      }, 5000);
-
+      const timer = setTimeout(() => setShowResumeIndicator(false), 5000);
       return () => clearTimeout(timer);
     }
   }, [state.lastPosition, isLoading]);
@@ -103,10 +78,10 @@ export function VideoPlayer({
   };
 
   const handleDownload = () => {
-    // Create a download link for the video
     const link = document.createElement('a');
     link.href = videoUrl;
-    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.mp4`;
+    // Make sure download extension matches file type (.webm)
+    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.webm`;
     link.target = '_blank';
     document.body.appendChild(link);
     link.click();
@@ -114,8 +89,6 @@ export function VideoPlayer({
   };
 
   const handlePlaylistToggle = () => {
-    // Toggle playlist visibility or navigate to playlist view
-    // For now, we'll show a toast notification
     alert('Playlist feature coming soon! This will show related videos and learning materials.');
   };
 
@@ -141,11 +114,10 @@ export function VideoPlayer({
           controls 
           preload="metadata"
         >
-          <source src={videoUrl} type="video/mp4" />
+          <source src={videoUrl} type="video/webm" />
           Your browser does not support the video tag.
         </video>
-        
-        {/* Resume Position Indicator */}
+
         {showResumeIndicator && (
           <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-3 rounded-xl shadow-lg transition-all duration-300 border border-white/20">
             <div className="flex items-center space-x-3">
@@ -168,8 +140,7 @@ export function VideoPlayer({
           </div>
         )}
       </div>
-      
-      {/* Video Controls Bar */}
+
       <div className="p-6 bg-surface-secondary">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
@@ -194,8 +165,7 @@ export function VideoPlayer({
             </Button>
           </div>
         </div>
-        
-        {/* Video Metadata */}
+
         <div className="flex flex-wrap items-center gap-6 text-sm">
           <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-soft">
             <div className="w-2 h-2 bg-primary rounded-full"></div>
