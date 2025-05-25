@@ -14,7 +14,7 @@ interface VideoPlayerProps {
 export function VideoPlayer({ 
   userId, 
   videoId, 
-  videoUrl = "/static/LectureVideos/sample-lecture.mp4.webm",
+  videoUrl = "/static/LectureVideos/sample-lecture.mp4.webm", // updated to .webm with .mp4.webm filename
   title = "Introduction to React.js"
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -34,12 +34,29 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
-    const handleTimeUpdate = () => handlers.handleTimeUpdate(video.currentTime);
-    const handlePlay = () => handlers.handlePlay();
-    const handlePause = () => handlers.handlePause();
-    const handleSeeked = () => handlers.handleSeeked(video.currentTime);
-    const handleLoadedMetadata = () => handlers.handleLoadedMetadata(video.duration);
-    const handleRateChange = () => handlers.handlePlaybackRateChange(video.playbackRate);
+    const handleTimeUpdate = () => {
+      handlers.handleTimeUpdate(video.currentTime);
+    };
+
+    const handlePlay = () => {
+      handlers.handlePlay();
+    };
+
+    const handlePause = () => {
+      handlers.handlePause();
+    };
+
+    const handleSeeked = () => {
+      handlers.handleSeeked(video.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+      handlers.handleLoadedMetadata(video.duration);
+    };
+
+    const handleRateChange = () => {
+      handlers.handlePlaybackRateChange(video.playbackRate);
+    };
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('play', handlePlay);
@@ -64,7 +81,11 @@ export function VideoPlayer({
 
     if (state.lastPosition > 10) {
       setShowResumeIndicator(true);
-      const timer = setTimeout(() => setShowResumeIndicator(false), 5000);
+      
+      const timer = setTimeout(() => {
+        setShowResumeIndicator(false);
+      }, 5000);
+
       return () => clearTimeout(timer);
     }
   }, [state.lastPosition, isLoading]);
@@ -80,7 +101,7 @@ export function VideoPlayer({
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = videoUrl;
-    // Make sure download extension matches file type (.webm)
+    // Replace all non-alphanumeric chars with _ and ensure extension is .webm
     link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.webm`;
     link.target = '_blank';
     document.body.appendChild(link);
@@ -117,7 +138,7 @@ export function VideoPlayer({
           <source src={videoUrl} type="video/webm" />
           Your browser does not support the video tag.
         </video>
-
+        
         {showResumeIndicator && (
           <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-3 rounded-xl shadow-lg transition-all duration-300 border border-white/20">
             <div className="flex items-center space-x-3">
@@ -140,7 +161,7 @@ export function VideoPlayer({
           </div>
         )}
       </div>
-
+      
       <div className="p-6 bg-surface-secondary">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
@@ -165,7 +186,7 @@ export function VideoPlayer({
             </Button>
           </div>
         </div>
-
+        
         <div className="flex flex-wrap items-center gap-6 text-sm">
           <div className="flex items-center space-x-2 bg-white rounded-lg px-3 py-2 shadow-soft">
             <div className="w-2 h-2 bg-primary rounded-full"></div>
