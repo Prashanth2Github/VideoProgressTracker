@@ -1,10 +1,20 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import cors from "cors";
 import { storage } from "./storage";
 import { insertVideoProgressSchema, updateVideoProgressSchema } from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Enable CORS - adjust origin as needed for security
+  app.use(cors({
+    origin: "*", // Change "*" to your frontend URL in production for security
+    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  }));
+
+  // Make sure JSON body parser is added in your main server file:
+  // app.use(express.json());
+
   // Get video progress for a user
   app.get("/api/progress/:userId/:videoId", async (req, res) => {
     try {
@@ -36,7 +46,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing userId or videoId" });
       }
 
-      // Combine params and body; ensure updatedAt is set
       const progressData = {
         ...req.body,
         userId,
@@ -44,17 +53,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updatedAt: req.body.updatedAt ? new Date(req.body.updatedAt) : new Date(),
       };
 
-      // Validate incoming data against insert schema
       const validatedData = insertVideoProgressSchema.parse(progressData);
 
       const existingProgress = await storage.getVideoProgress(userId, videoId);
 
       let result;
       if (existingProgress) {
-        // Update existing
         result = await storage.updateVideoProgress(userId, videoId, validatedData);
       } else {
-        // Create new
         result = await storage.createVideoProgress(validatedData);
       }
 
@@ -82,7 +88,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing userId or videoId" });
       }
 
-      // Patch data: merge params + body + updatedAt set
       const updateData = updateVideoProgressSchema.parse({
         ...req.body,
         userId,

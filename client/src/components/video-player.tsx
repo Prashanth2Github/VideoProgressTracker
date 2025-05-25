@@ -1,8 +1,8 @@
-import { useRef, useEffect, useState } from 'react';
-import { Play, Pause, RotateCcw, Download, List } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useVideoProgress } from '@/hooks/use-video-progress';
-import { formatTimeDetailed } from '@/lib/interval-utils';
+import { useRef, useEffect, useState } from "react";
+import { Play, Pause, RotateCcw, Download, List } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useVideoProgress } from "@/hooks/use-video-progress";
+import { formatTimeDetailed } from "@/lib/interval-utils";
 
 interface VideoPlayerProps {
   userId: string;
@@ -11,20 +11,20 @@ interface VideoPlayerProps {
   title?: string;
 }
 
-export function VideoPlayer({ 
-  userId, 
-  videoId, 
+export function VideoPlayer({
+  userId,
+  videoId,
   videoUrl = "/static/LectureVideos/sample-lecture.mp4.webm",
-  title = "Introduction to React.js"
+  title = "Introduction to React.js",
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [showResumeIndicator, setShowResumeIndicator] = useState(false);
-  const [videoMetrics, setVideoMetrics] = useState({
+  const [videoMetrics] = useState({
     views: 1234,
-    publishDate: "Jan 15, 2024"
+    publishDate: "Jan 15, 2024",
   });
 
-  const { state, handlers, actions, isLoading } = useVideoProgress({
+  const { state, handlers, isLoading } = useVideoProgress({
     userId,
     videoId,
     autoSaveInterval: 5000,
@@ -34,6 +34,7 @@ export function VideoPlayer({
     const video = videoRef.current;
     if (!video) return;
 
+    // Bind video events to handlers
     const handleTimeUpdate = () => handlers.handleTimeUpdate(video.currentTime);
     const handlePlay = () => handlers.handlePlay();
     const handlePause = () => handlers.handlePause();
@@ -41,26 +42,27 @@ export function VideoPlayer({
     const handleLoadedMetadata = () => handlers.handleLoadedMetadata(video.duration);
     const handleRateChange = () => handlers.handlePlaybackRateChange(video.playbackRate);
 
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    video.addEventListener('play', handlePlay);
-    video.addEventListener('pause', handlePause);
-    video.addEventListener('seeked', handleSeeked);
-    video.addEventListener('loadedmetadata', handleLoadedMetadata);
-    video.addEventListener('ratechange', handleRateChange);
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    video.addEventListener("play", handlePlay);
+    video.addEventListener("pause", handlePause);
+    video.addEventListener("seeked", handleSeeked);
+    video.addEventListener("loadedmetadata", handleLoadedMetadata);
+    video.addEventListener("ratechange", handleRateChange);
 
     return () => {
-      video.removeEventListener('timeupdate', handleTimeUpdate);
-      video.removeEventListener('play', handlePlay);
-      video.removeEventListener('pause', handlePause);
-      video.removeEventListener('seeked', handleSeeked);
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      video.removeEventListener('ratechange', handleRateChange);
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+      video.removeEventListener("play", handlePlay);
+      video.removeEventListener("pause", handlePause);
+      video.removeEventListener("seeked", handleSeeked);
+      video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      video.removeEventListener("ratechange", handleRateChange);
     };
   }, [handlers]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !state.lastPosition || isLoading) return;
+
     if (state.lastPosition > 10) {
       setShowResumeIndicator(true);
       const timer = setTimeout(() => setShowResumeIndicator(false), 5000);
@@ -73,21 +75,22 @@ export function VideoPlayer({
     if (video && state.lastPosition) {
       video.currentTime = state.lastPosition;
       setShowResumeIndicator(false);
+      video.play();
     }
   };
 
   const handleDownload = () => {
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = videoUrl;
-    link.download = `${title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.webm`;
-    link.target = '_blank';
+    link.download = `${title.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.webm`;
+    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const handlePlaylistToggle = () => {
-    alert('Playlist feature coming soon!');
+    alert("Playlist feature coming soon!");
   };
 
   if (isLoading) {
@@ -106,10 +109,10 @@ export function VideoPlayer({
   return (
     <div className="bg-surface rounded-2xl shadow-medium overflow-hidden mb-8 border border-gray-100">
       <div className="aspect-video bg-gradient-to-br from-gray-900 to-black relative group">
-        <video 
+        <video
           ref={videoRef}
-          className="w-full h-full object-cover rounded-t-2xl" 
-          controls 
+          className="w-full h-full object-cover rounded-t-2xl"
+          controls
           preload="metadata"
         >
           <source src={videoUrl} type="video/webm" />
@@ -131,6 +134,7 @@ export function VideoPlayer({
                 variant="ghost"
                 className="text-gray-600 hover:text-primary p-2 h-auto rounded-lg"
                 onClick={handleResumeClick}
+                aria-label="Resume video"
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>
@@ -138,7 +142,7 @@ export function VideoPlayer({
           </div>
         )}
       </div>
-      
+
       <div className="p-6 bg-surface-secondary">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           <div>
@@ -146,11 +150,18 @@ export function VideoPlayer({
             <p className="text-sm text-gray-600">Learn React fundamentals with hands-on examples</p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button onClick={handlePlaylistToggle} className="gradient-primary hover:opacity-90 flex items-center space-x-2 rounded-xl px-4 py-2.5">
+            <Button
+              onClick={handlePlaylistToggle}
+              className="gradient-primary hover:opacity-90 flex items-center space-x-2 rounded-xl px-4 py-2.5"
+            >
               <List className="w-4 h-4" />
               <span className="font-medium">Playlist</span>
             </Button>
-            <Button onClick={handleDownload} variant="outline" className="flex items-center space-x-2 rounded-xl px-4 py-2.5 border-gray-200 hover:bg-gray-50">
+            <Button
+              onClick={handleDownload}
+              variant="outline"
+              className="flex items-center space-x-2 rounded-xl px-4 py-2.5 border-gray-200 hover:bg-gray-50"
+            >
               <Download className="w-4 h-4" />
               <span className="font-medium">Download</span>
             </Button>
