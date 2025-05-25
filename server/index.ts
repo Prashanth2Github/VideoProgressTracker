@@ -9,20 +9,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Serve static files (like video) from /server/public mapped to /static URL
+// Serve static files (e.g., videos) from public folder
 app.use("/static", express.static(path.join(__dirname, "public")));
-
-app.get("/test-video", (req: Request, res: Response) => {
-  const videoPath = path.join(__dirname, "public", "LectureVideos", "sample-lecture.mp4.webm");
-  res.sendFile(videoPath);
-});
 
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+// Logging for API routes
 app.use((req, res, next) => {
   const start = Date.now();
   const pathReq = req.path;
@@ -55,6 +52,7 @@ app.use((req, res, next) => {
   try {
     const server = await registerRoutes(app);
 
+    // Error handling middleware
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
@@ -65,7 +63,7 @@ app.use((req, res, next) => {
     if (app.get("env") === "development") {
       await setupVite(app, server);
     } else {
-      serveStatic(app);
+      serveStatic(app); // this should point to the built frontend (dist)
     }
 
     const port = Number(process.env.PORT) || 5000;
@@ -74,6 +72,7 @@ app.use((req, res, next) => {
     server.listen(port, host, () => {
       log(`✅ Server running on http://${host}:${port}`);
     });
+
   } catch (error) {
     console.error("❌ Failed to start server:", error);
     process.exit(1);
