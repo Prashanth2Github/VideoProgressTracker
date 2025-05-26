@@ -321,13 +321,6 @@ server/
 
 ## 🚀 Deployment
 
-### Deploy to Replit (Recommended)
-1. Import repository to Replit
-2. Replit automatically detects Node.js project
-3. Run `npm install` and `npm run dev`
-4. Application is live at your Replit URL
-
-### Deploy to Other Platforms
 - **Vercel**: Connect GitHub repo, auto-deployment
 - **Netlify**: Build command: `npm run build`, publish directory: `dist`
 - **Heroku**: Add `package.json` scripts for production build
@@ -394,13 +387,6 @@ Health check endpoint
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- SDE Intern Assignment requirements
-- React and Node.js communities
-- shadcn/ui for beautiful components
-- TanStack Query for data management
 
 ---
 
