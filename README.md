@@ -28,7 +28,7 @@ A React-based video progress tracking application that accurately tracks unique 
 
 ## 🚀 Live Demo
 
-[Live Application URL](https://your-replit-url.com)
+[Live Application URL]([https://your-replit-url.com](https://videoprogresstracker-q5n7.onrender.com))
 
 ## 🛠️ Tech Stack
 
